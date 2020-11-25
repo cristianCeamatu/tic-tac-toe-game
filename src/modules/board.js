@@ -1,6 +1,6 @@
-function Board() {
-  const cells = document.querySelectorAll('.cell');
-  const positions = Array.from(cells);
+function Board(positions, winData, winningMsg) {
+  // const cells = document.querySelectorAll('.cell');
+  // const positions = Array.from(cells);
 
   const checkForWinner = (turn) => {
     const winningCombinations = [
@@ -14,34 +14,36 @@ function Board() {
       [2, 4, 6],
     ];
     const currentTurn = turn % 2 === 0 ? 'O' : 'X';
-    const currentValues =  positions.map(el => el.textContent).reduce(function(a, e, i) {
-      if (e === currentTurn)
-          a.push(+i);
-      return a;
-  }, [])
+    const currentValues = positions
+      .map((el) => el.textContent)
+      .reduce(function (a, e, i) {
+        if (e === currentTurn) a.push(+i);
+        return a;
+      }, []);
 
-    const winner =  winningCombinations.some(winningCombo => {
-      return winningCombo.every(index => currentValues.includes(index))
+    const winner = winningCombinations.some((winningCombo) => {
+      return winningCombo.every((index) => currentValues.includes(index));
     });
-    return winner
+    return winner;
   };
 
   const updateDom = (turn) => {
-    const winningMsg = document.querySelector('.winning-msg');
-    const winData = document.querySelector('[data-win-text]');
     const currentTurn = turn % 2 === 0 ? 'O' : 'X';
-    const winningCombo = positions.filter(position => position.textContent === currentTurn);
+    const winningCombo = positions.filter(
+      (position) => position.textContent === currentTurn
+    );
 
-    winningCombo.forEach(element => {
+    if (currentTurn === 'X') {
+      winData.innerText = 'Conguratulation You Won The game!';
+    } else {
+      winData.innerText = 'Oops You loose! Computer won try again';
+    }
+
+    winningCombo.forEach((element) => {
       element.classList.add('win');
       winningMsg.classList.add('show');
-      if (element.innerText === 'X') {
-        winData.innerText = 'Conguratulation You Won The game!';
-      } else {
-        winData.innerText = 'Oops You loose! Computer won try again';
-      }
     });
-  }
+  };
   return { positions, checkForWinner, updateDom };
 }
 export default Board;
